@@ -6,14 +6,35 @@
     <title>Weather Dashboard</title>
 
     <!-- Resource hints for faster loading -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="preconnect" href="https://api.open-meteo.com">
-    <link rel="preconnect" href="https://geocoding-api.open-meteo.com">
     <link rel="dns-prefetch" href="https://embed.windy.com">
-
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&display=swap" />
     <style>
+        /* Local Material Symbols Font */
+        @font-face {
+            font-family: 'Material Symbols Outlined';
+            font-style: normal;
+            font-weight: 100 700;
+            font-display: swap;
+            src: url(fonts/material-symbols-outlined.woff2) format('woff2');
+        }
+
+        .material-symbols-outlined {
+            font-family: 'Material Symbols Outlined';
+            font-weight: normal;
+            font-style: normal;
+            font-size: 24px;
+            line-height: 1;
+            letter-spacing: normal;
+            text-transform: none;
+            display: inline-block;
+            white-space: nowrap;
+            word-wrap: normal;
+            direction: ltr;
+            -webkit-font-feature-settings: 'liga';
+            -webkit-font-smoothing: antialiased;
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 48;
+        }
+
         * {
             margin: 0;
             padding: 0;
@@ -63,10 +84,6 @@
         .weather-icon {
             width: 70px;
             height: 70px;
-        }
-
-        .material-symbols-outlined {
-            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 48;
         }
 
         .weather-details {
@@ -251,28 +268,46 @@
 
     <script>
         const LOCATION = 'Bahrain';
-        const BAHRAIN_CENTER_LAT = 26.0;
-        const BAHRAIN_CENTER_LON = 50.5577;
+        const BAHRAIN_LAT = 26.0;
+        const BAHRAIN_LON = 50.5577;
+        const CACHE_KEY = 'weather_cache';
+        const CACHE_DURATION = 10 * 60 * 1000; // 10 minutes
+
+        // Load cached data immediately on page load
+        function loadCachedWeather() {
+            try {
+                const cached = localStorage.getItem(CACHE_KEY);
+                if (cached) {
+                    const { data, timestamp } = JSON.parse(cached);
+                    const age = Date.now() - timestamp;
+
+                    if (age < CACHE_DURATION) {
+                        // Cache is still valid, display immediately
+                        displayWeather(data, 'Bahrain', 'Bahrain', BAHRAIN_LAT, BAHRAIN_LON);
+                        return true;
+                    }
+                }
+            } catch (error) {
+                console.error('Error loading cache:', error);
+            }
+            return false;
+        }
 
         async function fetchWeather() {
             try {
-                // Open-Meteo API to get coordinates for the location
-                const geoResponse = await fetch(`https://geocoding-api.open-meteo.com/v1/search?name=${LOCATION}&count=1&language=en&format=json`);
-                const geoData = await geoResponse.json();
-
-                if (!geoData.results || geoData.results.length === 0) {
-                    throw new Error('Location not found');
-                }
-
-                const { latitude, longitude, name, country } = geoData.results[0];
-
-                // Fetch weather data from Open-Meteo
+                // Fetch weather data from Open-Meteo (no geocoding needed!)
                 const weatherResponse = await fetch(
-                    `https://api.open-meteo.com/v1/forecast?latitude=${latitude}&longitude=${longitude}&current=temperature_2m,relative_humidity_2m,apparent_temperature,weather_code,wind_speed_10m,wind_direction_10m&daily=weather_code,temperature_2m_max,temperature_2m_min,sunrise,sunset,uv_index_max&timezone=auto&forecast_days=7`
+                    `https://api.open-meteo.com/v1/forecast?latitude=${BAHRAIN_LAT}&longitude=${BAHRAIN_LON}&current=temperature_2m,relative_humidity_2m,apparent_temperature,weather_code,wind_speed_10m,wind_direction_10m&daily=weather_code,temperature_2m_max,temperature_2m_min,sunrise,sunset,uv_index_max&timezone=auto&forecast_days=7`
                 );
                 const weatherData = await weatherResponse.json();
 
-                displayWeather(weatherData, name, country, latitude, longitude);
+                // Cache the data
+                localStorage.setItem(CACHE_KEY, JSON.stringify({
+                    data: weatherData,
+                    timestamp: Date.now()
+                }));
+
+                displayWeather(weatherData, 'Bahrain', 'Bahrain', BAHRAIN_LAT, BAHRAIN_LON);
             } catch (error) {
                 console.error('Error fetching weather:', error);
                 document.querySelector('.dashboard').innerHTML =
@@ -438,7 +473,7 @@
 
                     <div class="radar-section">
                         <div class="radar-map">
-                            <iframe loading="lazy" src="https://embed.windy.com/embed2.html?lat=${BAHRAIN_CENTER_LAT}&lon=${BAHRAIN_CENTER_LON}&detailLat=${BAHRAIN_CENTER_LAT}&detailLon=${BAHRAIN_CENTER_LON}&width=650&height=450&zoom=9&level=surface&overlay=wind&product=ecmwf&menu=&message=&marker=&calendar=&pressure=&type=map&location=coordinates&detail=&metricWind=default&metricTemp=default"
+                            <iframe loading="lazy" src="https://embed.windy.com/embed2.html?lat=${lat}&lon=${lon}&detailLat=${lat}&detailLon=${lon}&width=650&height=450&zoom=9&level=surface&overlay=wind&product=ecmwf&menu=&message=&marker=&calendar=&pressure=&type=map&location=coordinates&detail=&metricWind=default&metricTemp=default"
                                     frameborder="0"></iframe>
                         </div>
                     </div>
@@ -463,7 +498,10 @@
             `;
         }
 
-        // Fetch weather data on page load
+        // Load cached data immediately, then fetch fresh data
+        const hasCachedData = loadCachedWeather();
+
+        // Always fetch fresh data in background
         fetchWeather();
 
         // Refresh every 10 minutes
