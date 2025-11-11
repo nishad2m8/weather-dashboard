@@ -1,0 +1,459 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Weather Dashboard</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: #f5f5f5;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .dashboard {
+            width: 800px;
+            height: 480px;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            overflow: hidden;
+        }
+
+        .top-section {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            height: 260px;
+        }
+
+        .current-weather {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .temp-display {
+            display: flex;
+            align-items: flex-start;
+            gap: 15px;
+        }
+
+        .temp-main {
+            font-size: 52px;
+            font-weight: 300;
+            color: #333;
+            line-height: 1;
+        }
+
+        .weather-icon {
+            width: 70px;
+            height: 70px;
+        }
+
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 48;
+        }
+
+        .weather-details {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+            font-size: 13px;
+        }
+
+        .detail-item {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .detail-label {
+            color: #5e5e5e;
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            font-weight: 600;
+        }
+
+        .detail-value {
+            color: #333;
+            font-size: 16px;
+            font-weight: 500;
+        }
+
+        .sun-moon {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 8px;
+        }
+
+        .info-card {
+            background: #f9f9f9;
+            padding: 6px 4px;
+            border-radius: 8px;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .info-label {
+            font-size: 10px;
+            color: #5e5e5e;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 4px;
+            font-weight: 600;
+        }
+
+        .info-value {
+            font-size: 13px;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .radar-section {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .radar-map {
+            width: 100%;
+            height: 100%;
+            border-radius: 10px;
+            background: #f0f0f0;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .radar-map iframe {
+            width: 100%;
+            height: 130%;
+            border: none;
+            position: absolute;
+            top: 0;
+            left: 0;
+        }
+
+        .forecast-section {
+            border-top: 1px solid #eee;
+            padding-top: 10px;
+        }
+
+        .forecast-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 8px;
+        }
+
+        .forecast-days {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 10px;
+        }
+
+        .forecast-day {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 6px;
+            border-radius: 8px;
+            background: #f9f9f9;
+            text-align: center;
+        }
+
+        .forecast-date {
+            font-size: 13px;
+            color: #333;
+            font-weight: 600;
+        }
+
+        .forecast-icon {
+            width: 32px;
+            height: 32px;
+        }
+
+        .forecast-condition {
+            font-size: 13px;
+            color: #333;
+            line-height: 1.2;
+            font-weight: 500;
+        }
+
+        .forecast-temp {
+            font-size: 13px;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .forecast-temp-low {
+            font-size: 13px;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .loading {
+            text-align: center;
+            color: #888;
+            font-size: 18px;
+            padding: 40px;
+        }
+
+        ::-webkit-scrollbar {
+            width: 4px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #ddd;
+            border-radius: 2px;
+        }
+    </style>
+</head>
+<body>
+    <div class="dashboard"></div>
+
+    <script>
+        const LOCATION = 'Bahrain';
+        const BAHRAIN_CENTER_LAT = 26.0;
+        const BAHRAIN_CENTER_LON = 50.5577;
+
+        async function fetchWeather() {
+            try {
+                // Open-Meteo API to get coordinates for the location
+                const geoResponse = await fetch(`https://geocoding-api.open-meteo.com/v1/search?name=${LOCATION}&count=1&language=en&format=json`);
+                const geoData = await geoResponse.json();
+
+                if (!geoData.results || geoData.results.length === 0) {
+                    throw new Error('Location not found');
+                }
+
+                const { latitude, longitude, name, country } = geoData.results[0];
+
+                // Fetch weather data from Open-Meteo
+                const weatherResponse = await fetch(
+                    `https://api.open-meteo.com/v1/forecast?latitude=${latitude}&longitude=${longitude}&current=temperature_2m,relative_humidity_2m,apparent_temperature,weather_code,wind_speed_10m,wind_direction_10m&daily=weather_code,temperature_2m_max,temperature_2m_min,sunrise,sunset,uv_index_max&timezone=auto&forecast_days=7`
+                );
+                const weatherData = await weatherResponse.json();
+
+                displayWeather(weatherData, name, country, latitude, longitude);
+            } catch (error) {
+                console.error('Error fetching weather:', error);
+                document.querySelector('.dashboard').innerHTML =
+                    `<div class="loading">Error: ${error.message}</div>`;
+            }
+        }
+
+        function calculateMoonPhase(date = new Date()) {
+            let year = date.getFullYear();
+            let month = date.getMonth() + 1;
+            const day = date.getDate();
+
+            let c = 0, e = 0, jd = 0, b = 0;
+
+            if (month < 3) {
+                year--;
+                month += 12;
+            }
+
+            ++month;
+            c = 365.25 * year;
+            e = 30.6 * month;
+            jd = c + e + day - 694039.09;
+            jd /= 29.5305882;
+            b = parseInt(jd);
+            jd -= b;
+            b = Math.round(jd * 8);
+
+            if (b >= 8) b = 0;
+
+            const phases = [
+                { name: 'New Moon', icon: 'brightness_1' },
+                { name: 'Waxing Crescent', icon: 'nightlight' },
+                { name: 'First Quarter', icon: 'nightlight_round' },
+                { name: 'Waxing Gibbous', icon: 'bedtime' },
+                { name: 'Full Moon', icon: 'circle' },
+                { name: 'Waning Gibbous', icon: 'bedtime' },
+                { name: 'Last Quarter', icon: 'nightlight_round' },
+                { name: 'Waning Crescent', icon: 'nightlight' }
+            ];
+
+            return phases[b];
+        }
+
+        function getWeatherIcon(code) {
+            // Map to Google Material Symbol icon names
+            const icons = {
+                0: 'clear_day',           // Clear sky
+                1: 'partly_cloudy_day',   // Mainly clear
+                2: 'partly_cloudy_day',   // Partly cloudy
+                3: 'cloud',               // Overcast
+                45: 'foggy',              // Fog
+                48: 'foggy',              // Rime fog
+                51: 'rainy_light',        // Light drizzle
+                53: 'rainy',              // Drizzle
+                55: 'rainy',              // Heavy drizzle
+                61: 'rainy_light',        // Light rain
+                63: 'rainy',              // Rain
+                65: 'rainy_heavy',        // Heavy rain
+                71: 'weather_snowy',      // Light snow
+                73: 'weather_snowy',      // Snow
+                75: 'weather_snowy',      // Heavy snow
+                80: 'rainy',              // Light showers
+                81: 'rainy',              // Showers
+                82: 'rainy_heavy',        // Heavy showers
+                95: 'thunderstorm',       // Thunderstorm
+                96: 'thunderstorm',       // Thunderstorm
+                99: 'thunderstorm'        // Thunderstorm
+            };
+            return icons[code] || 'clear_day';
+        }
+
+        function getWeatherDescription(code) {
+            const descriptions = {
+                0: 'Clear', 1: 'Mainly Clear', 2: 'Partly Cloudy', 3: 'Cloudy',
+                45: 'Foggy', 48: 'Foggy',
+                51: 'Light Drizzle', 53: 'Drizzle', 55: 'Heavy Drizzle',
+                61: 'Light Rain', 63: 'Rain', 65: 'Heavy Rain',
+                71: 'Light Snow', 73: 'Snow', 75: 'Heavy Snow',
+                80: 'Light Showers', 81: 'Showers', 82: 'Heavy Showers',
+                95: 'Thunderstorm', 96: 'Thunderstorm', 99: 'Thunderstorm'
+            };
+            return descriptions[code] || 'Clear';
+        }
+
+        function formatTime(timeStr) {
+            if (!timeStr) return 'N/A';
+            return timeStr.split('T')[1]?.substring(0, 5) || timeStr;
+        }
+
+        function formatDateShort(dateStr) {
+            if (!dateStr) return 'N/A';
+            const date = new Date(dateStr);
+            const today = new Date();
+            const tomorrow = new Date(today);
+            tomorrow.setDate(tomorrow.getDate() + 1);
+
+            if (date.toDateString() === today.toDateString()) return 'Today';
+            if (date.toDateString() === tomorrow.toDateString()) return 'Tomorrow';
+
+            const days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+            return days[date.getDay()];
+        }
+
+        function displayWeather(data, locationName, country, lat, lon) {
+            const { current, daily } = data;
+            const moonPhase = calculateMoonPhase();
+
+            const dashboard = document.querySelector('.dashboard');
+            dashboard.innerHTML = `
+                <div class="top-section">
+                    <div class="current-weather">
+                        <div class="temp-display">
+                            <div class="temp-main">${Math.round(current.temperature_2m)}°</div>
+                            <span class="material-symbols-outlined weather-icon" style="font-size: 55px; color: #F57C00;">${getWeatherIcon(current.weather_code)}</span>
+                        </div>
+
+                        <div class="weather-details">
+                            <div class="detail-item">
+                                <span class="detail-label">Feels Like</span>
+                                <span class="detail-value">${Math.round(current.apparent_temperature)}°C</span>
+                            </div>
+                            <div class="detail-item">
+                                <span class="detail-label">Humidity</span>
+                                <span class="detail-value">${current.relative_humidity_2m}%</span>
+                            </div>
+                            <div class="detail-item">
+                                <span class="detail-label">Wind</span>
+                                <span class="detail-value" style="display: flex; align-items: center; gap: 4px;">
+                                    <span class="material-symbols-outlined" style="font-size: 18px; transform: rotate(${current.wind_direction_10m}deg);">arrow_upward</span>
+                                    ${Math.round(current.wind_speed_10m)} km/h
+                                </span>
+                            </div>
+                            <div class="detail-item">
+                                <span class="detail-label">Condition</span>
+                                <span class="detail-value">${getWeatherDescription(current.weather_code)}</span>
+                            </div>
+                        </div>
+
+                        <div class="sun-moon">
+                            <div class="info-card">
+                                <div class="info-label">Sunrise</div>
+                                <span class="material-symbols-outlined" style="font-size: 28px; color: #F57C00; display: block; margin: 4px 0;">wb_twilight</span>
+                                <div class="info-value">${formatTime(daily.sunrise[0])}</div>
+                            </div>
+                            <div class="info-card">
+                                <div class="info-label">Sunset</div>
+                                <span class="material-symbols-outlined" style="font-size: 28px; color: #F57C00; display: block; margin: 4px 0;">wb_twilight</span>
+                                <div class="info-value">${formatTime(daily.sunset[0])}</div>
+                            </div>
+                            <div class="info-card">
+                                <div class="info-label">Moon Phase</div>
+                                <span class="material-symbols-outlined" style="font-size: 28px; color: #F57C00; display: block; margin: 4px 0;">${moonPhase.icon}</span>
+                                <div class="info-value">${moonPhase.name}</div>
+                            </div>
+                            <div class="info-card">
+                                <div class="info-label">UV Index</div>
+                                <span class="material-symbols-outlined" style="font-size: 28px; color: #F57C00; display: block; margin: 4px 0;">light_mode</span>
+                                <div class="info-value">${Math.round(daily.uv_index_max[0])}</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="radar-section">
+                        <div class="radar-map">
+                            <iframe src="https://embed.windy.com/embed2.html?lat=${BAHRAIN_CENTER_LAT}&lon=${BAHRAIN_CENTER_LON}&detailLat=${BAHRAIN_CENTER_LAT}&detailLon=${BAHRAIN_CENTER_LON}&width=650&height=450&zoom=9&level=surface&overlay=wind&product=ecmwf&menu=&message=&marker=&calendar=&pressure=&type=map&location=coordinates&detail=&metricWind=default&metricTemp=default"
+                                    frameborder="0"></iframe>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="forecast-section">
+                    <div class="forecast-title">7-Day Forecast</div>
+                    <div class="forecast-days">
+                        ${daily.time.slice(0, 7).map((date, index) => `
+                            <div class="forecast-day">
+                                <span class="forecast-date">${formatDateShort(date)}</span>
+                                <span class="material-symbols-outlined" style="font-size: 32px; color: #F57C00;">${getWeatherIcon(daily.weather_code[index])}</span>
+                                <span class="forecast-condition">${getWeatherDescription(daily.weather_code[index])}</span>
+                                <div>
+                                    <span class="forecast-temp">${Math.round(daily.temperature_2m_max[index])}°</span>
+                                    <span class="forecast-temp-low"> ${Math.round(daily.temperature_2m_min[index])}°</span>
+                                </div>
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+            `;
+        }
+
+        // Fetch weather data on page load
+        fetchWeather();
+
+        // Refresh every 10 minutes
+        setInterval(fetchWeather, 600000);
+    </script>
+</body>
+</html>
