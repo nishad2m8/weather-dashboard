@@ -4,7 +4,15 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Weather Dashboard</title>
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
+
+    <!-- Resource hints for faster loading -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preconnect" href="https://api.open-meteo.com">
+    <link rel="preconnect" href="https://geocoding-api.open-meteo.com">
+    <link rel="dns-prefetch" href="https://embed.windy.com">
+
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&display=swap" />
     <style>
         * {
             margin: 0;
@@ -206,6 +214,22 @@
             padding: 40px;
         }
 
+        .skeleton {
+            background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+            background-size: 200% 100%;
+            animation: loading 1.5s infinite;
+        }
+
+        @keyframes loading {
+            0% { background-position: 200% 0; }
+            100% { background-position: -200% 0; }
+        }
+
+        .skeleton-box {
+            border-radius: 4px;
+            margin-bottom: 10px;
+        }
+
         ::-webkit-scrollbar {
             width: 4px;
         }
@@ -221,7 +245,9 @@
     </style>
 </head>
 <body>
-    <div class="dashboard"></div>
+    <div class="dashboard">
+        <div class="loading">Loading weather data...</div>
+    </div>
 
     <script>
         const LOCATION = 'Bahrain';
@@ -412,7 +438,7 @@
 
                     <div class="radar-section">
                         <div class="radar-map">
-                            <iframe src="https://embed.windy.com/embed2.html?lat=${BAHRAIN_CENTER_LAT}&lon=${BAHRAIN_CENTER_LON}&detailLat=${BAHRAIN_CENTER_LAT}&detailLon=${BAHRAIN_CENTER_LON}&width=650&height=450&zoom=9&level=surface&overlay=wind&product=ecmwf&menu=&message=&marker=&calendar=&pressure=&type=map&location=coordinates&detail=&metricWind=default&metricTemp=default"
+                            <iframe loading="lazy" src="https://embed.windy.com/embed2.html?lat=${BAHRAIN_CENTER_LAT}&lon=${BAHRAIN_CENTER_LON}&detailLat=${BAHRAIN_CENTER_LAT}&detailLon=${BAHRAIN_CENTER_LON}&width=650&height=450&zoom=9&level=surface&overlay=wind&product=ecmwf&menu=&message=&marker=&calendar=&pressure=&type=map&location=coordinates&detail=&metricWind=default&metricTemp=default"
                                     frameborder="0"></iframe>
                         </div>
                     </div>
