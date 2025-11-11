@@ -30,6 +30,7 @@
             white-space: nowrap;
             word-wrap: normal;
             direction: ltr;
+            font-feature-settings: 'liga';
             -webkit-font-feature-settings: 'liga';
             -webkit-font-smoothing: antialiased;
             font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 48;
@@ -224,17 +225,11 @@
             color: #333;
         }
 
-        .loading {
-            text-align: center;
-            color: #888;
-            font-size: 18px;
-            padding: 40px;
-        }
-
         .skeleton {
             background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
             background-size: 200% 100%;
             animation: loading 1.5s infinite;
+            border-radius: 4px;
         }
 
         @keyframes loading {
@@ -242,9 +237,25 @@
             100% { background-position: -200% 0; }
         }
 
-        .skeleton-box {
-            border-radius: 4px;
-            margin-bottom: 10px;
+        .skeleton-text {
+            height: 20px;
+            margin: 8px 0;
+        }
+
+        .skeleton-temp {
+            height: 60px;
+            width: 150px;
+            margin-bottom: 15px;
+        }
+
+        .skeleton-icon {
+            height: 70px;
+            width: 70px;
+            border-radius: 50%;
+        }
+
+        .skeleton-card {
+            height: 80px;
         }
 
         ::-webkit-scrollbar {
@@ -262,8 +273,54 @@
     </style>
 </head>
 <body>
-    <div class="dashboard">
-        <div class="loading">Loading weather data...</div>
+    <div class="dashboard" id="dashboard">
+        <div class="top-section">
+            <div class="current-weather">
+                <div class="temp-display">
+                    <div class="skeleton skeleton-temp"></div>
+                    <div class="skeleton skeleton-icon"></div>
+                </div>
+                <div class="weather-details">
+                    <div class="detail-item">
+                        <div class="skeleton skeleton-text" style="width: 60px; height: 12px;"></div>
+                        <div class="skeleton skeleton-text" style="width: 80px; height: 18px;"></div>
+                    </div>
+                    <div class="detail-item">
+                        <div class="skeleton skeleton-text" style="width: 60px; height: 12px;"></div>
+                        <div class="skeleton skeleton-text" style="width: 80px; height: 18px;"></div>
+                    </div>
+                    <div class="detail-item">
+                        <div class="skeleton skeleton-text" style="width: 60px; height: 12px;"></div>
+                        <div class="skeleton skeleton-text" style="width: 80px; height: 18px;"></div>
+                    </div>
+                    <div class="detail-item">
+                        <div class="skeleton skeleton-text" style="width: 60px; height: 12px;"></div>
+                        <div class="skeleton skeleton-text" style="width: 80px; height: 18px;"></div>
+                    </div>
+                </div>
+                <div class="sun-moon">
+                    <div class="info-card"><div class="skeleton skeleton-card"></div></div>
+                    <div class="info-card"><div class="skeleton skeleton-card"></div></div>
+                    <div class="info-card"><div class="skeleton skeleton-card"></div></div>
+                    <div class="info-card"><div class="skeleton skeleton-card"></div></div>
+                </div>
+            </div>
+            <div class="radar-section">
+                <div class="radar-map" style="background: #e8e8e8;"></div>
+            </div>
+        </div>
+        <div class="forecast-section">
+            <div class="forecast-title">7-Day Forecast</div>
+            <div class="forecast-days">
+                <div class="forecast-day"><div class="skeleton" style="height: 120px;"></div></div>
+                <div class="forecast-day"><div class="skeleton" style="height: 120px;"></div></div>
+                <div class="forecast-day"><div class="skeleton" style="height: 120px;"></div></div>
+                <div class="forecast-day"><div class="skeleton" style="height: 120px;"></div></div>
+                <div class="forecast-day"><div class="skeleton" style="height: 120px;"></div></div>
+                <div class="forecast-day"><div class="skeleton" style="height: 120px;"></div></div>
+                <div class="forecast-day"><div class="skeleton" style="height: 120px;"></div></div>
+            </div>
+        </div>
     </div>
 
     <script>
@@ -310,8 +367,8 @@
                 displayWeather(weatherData, 'Bahrain', 'Bahrain', BAHRAIN_LAT, BAHRAIN_LON);
             } catch (error) {
                 console.error('Error fetching weather:', error);
-                document.querySelector('.dashboard').innerHTML =
-                    `<div class="loading">Error: ${error.message}</div>`;
+                document.getElementById('dashboard').innerHTML =
+                    `<div style="text-align: center; padding: 40px; color: #888;">Error loading weather data. Please refresh.</div>`;
             }
         }
 
@@ -416,7 +473,7 @@
             const { current, daily } = data;
             const moonPhase = calculateMoonPhase();
 
-            const dashboard = document.querySelector('.dashboard');
+            const dashboard = document.getElementById('dashboard');
             dashboard.innerHTML = `
                 <div class="top-section">
                     <div class="current-weather">
