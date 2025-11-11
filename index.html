@@ -540,11 +540,9 @@
                     </div>
 
                     <div class="radar-section">
-                        <div class="radar-map" style="background: linear-gradient(180deg, #87CEEB 0%, #E0F6FF 100%); display: flex; align-items: center; justify-content: center; color: #666; font-size: 14px;">
-                            <div style="text-align: center;">
-                                <span class="material-symbols-outlined" style="font-size: 48px; color: #4A90E2; display: block; margin-bottom: 8px;">map</span>
-                                Weather Map
-                            </div>
+                        <div class="radar-map">
+                            <iframe loading="lazy" src="https://embed.windy.com/embed2.html?lat=${lat}&lon=${lon}&detailLat=${lat}&detailLon=${lon}&width=650&height=450&zoom=9&level=surface&overlay=wind&product=ecmwf&menu=&message=&marker=&calendar=&pressure=&type=map&location=coordinates&detail=&metricWind=default&metricTemp=default"
+                                    frameborder="0"></iframe>
                         </div>
                     </div>
                 </div>
