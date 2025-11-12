@@ -61,7 +61,7 @@
 
         .top-section {
             display: grid;
-            grid-template-columns: 1fr 1fr;
+            grid-template-columns: 1.7fr 1fr;
             gap: 20px;
             height: 260px;
         }
@@ -97,7 +97,6 @@
         }
 
         .detail-item {
-            background: #f9f9f9;
             padding: 6px 0px;
             text-align: center;
             display: flex;
@@ -130,7 +129,6 @@
         }
 
         .info-card {
-            background: #f9f9f9;
             padding: 6px 0px;
             text-align: center;
             display: flex;
@@ -169,6 +167,8 @@
             background: #f0f0f0;
             overflow: hidden;
             position: relative;
+            border-radius: 10px;
+            border: 1px solid #333;
         }
 
         .radar-map iframe {
@@ -215,7 +215,6 @@
             align-items: center;
             gap: 7px;
             padding: 3px;
-            background: #f9f9f9;
             text-align: center;
         }
 
@@ -550,8 +549,10 @@
 
                     <div class="radar-section">
                         <div class="radar-map">
-                            <iframe loading="lazy" src="https://embed.windy.com/embed2.html?lat=${lat}&lon=${lon}&detailLat=${lat}&detailLon=${lon}&width=650&height=450&zoom=9&level=surface&overlay=ir&product=ecmwf&menu=&message=&marker=&calendar=&pressure=&type=map&location=coordinates&detail=&metricWind=default&metricTemp=default"
-                                    frameborder="0"></iframe>
+                            <iframe loading="lazy" 
+                                src="https://embed.windy.com/embed2.html?lat=${lat}&lon=${lon}&detailLat=${lat}&detailLon=${lon}&width=650&height=450&zoom=9&level=surface&overlay=wind&product=ecmwf&menu=&message=&marker=&calendar=&pressure=&type=map&location=coordinates&detail=&metricWind=default&metricTemp=°C">
+                            frameborder="0">
+                            </iframe>
                         </div>
                     </div>
                 </div>
