@@ -50,11 +50,13 @@
 
         .dashboard {
             width: 800px;
+            height: 480px;
+            overflow: hidden;
             background: white;
-            padding: 20px;
+            padding: 5px;
             display: flex;
             flex-direction: column;
-            gap: 12px;
+            gap: 5px;
         }
 
         .top-section {
@@ -77,8 +79,8 @@
         }
 
         .temp-main {
-            font-size: 52px;
-            font-weight: 300;
+            font-size: 65px;
+            font-weight: 800;
             color: #333;
             line-height: 1;
         }
@@ -169,37 +171,48 @@
         }
 
         .forecast-section {
-            border-top: 1px solid #eee;
             padding-top: 10px;
         }
 
         .forecast-title {
-            font-size: 16px;
-            font-weight: 600;
+            font-size: 20px;
+            font-weight: 800;
             color: #333;
-            margin-bottom: 8px;
+            margin-bottom: 10px;
+            text-align: center;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .forecast-title::before,
+        .forecast-title::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background-color: #333;
         }
 
         .forecast-days {
             display: grid;
             grid-template-columns: repeat(7, 1fr);
-            gap: 10px;
+            gap: 2px;
         }
 
         .forecast-day {
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 8px;
-            padding: 10px 6px;
+            gap: 7px;
+            padding: 3px;
             background: #f9f9f9;
             text-align: center;
         }
 
         .forecast-date {
-            font-size: 13px;
+            font-size: 20px;
             color: #333;
-            font-weight: 600;
+            font-weight: 800;
         }
 
         .forecast-icon {
@@ -208,22 +221,24 @@
         }
 
         .forecast-condition {
-            font-size: 13px;
+            font-size: 15px;
             color: #333;
             line-height: 1.2;
-            font-weight: 500;
+            font-weight: 700;
         }
 
         .forecast-temp {
-            font-size: 13px;
+            font-size: 20px;
             font-weight: 600;
             color: #333;
+            display: block;
         }
 
         .forecast-temp-low {
-            font-size: 13px;
+            font-size: 20px;
             font-weight: 600;
             color: #333;
+            display: block;
         }
 
         .skeleton {
@@ -490,7 +505,7 @@
                     <div class="current-weather">
                         <div class="temp-display">
                             <div class="temp-main">${Math.round(current.temperature_2m)}°</div>
-                            <span class="material-symbols-outlined weather-icon" style="font-size: 55px; color: #F57C00;">${getWeatherIcon(current.weather_code)}</span>
+                            <span class="material-symbols-outlined weather-icon" style="font-size: 70px; color: #F57C00;">${getWeatherIcon(current.weather_code)}</span>
                         </div>
 
                         <div class="weather-details">
@@ -541,7 +556,7 @@
 
                     <div class="radar-section">
                         <div class="radar-map">
-                            <iframe loading="lazy" src="https://embed.windy.com/embed2.html?lat=${lat}&lon=${lon}&detailLat=${lat}&detailLon=${lon}&width=650&height=450&zoom=9&level=surface&overlay=wind&product=ecmwf&menu=&message=&marker=&calendar=&pressure=&type=map&location=coordinates&detail=&metricWind=default&metricTemp=default"
+                            <iframe loading="lazy" src="https://embed.windy.com/embed2.html?lat=${lat}&lon=${lon}&detailLat=${lat}&detailLon=${lon}&width=650&height=450&zoom=9&level=surface&overlay=ir&product=ecmwf&menu=&message=&marker=&calendar=&pressure=&type=map&location=coordinates&detail=&metricWind=default&metricTemp=default"
                                     frameborder="0"></iframe>
                         </div>
                     </div>
@@ -553,7 +568,7 @@
                         ${daily.time.slice(0, 7).map((date, index) => `
                             <div class="forecast-day">
                                 <span class="forecast-date">${formatDateShort(date)}</span>
-                                <span class="material-symbols-outlined" style="font-size: 32px; color: #F57C00;">${getWeatherIcon(daily.weather_code[index])}</span>
+                                <span class="material-symbols-outlined" style="font-size: 50px; color: #F57C00;">${getWeatherIcon(daily.weather_code[index])}</span>
                                 <span class="forecast-condition">${getWeatherDescription(daily.weather_code[index])}</span>
                                 <div>
                                     <span class="forecast-temp">${Math.round(daily.temperature_2m_max[index])}°</span>
