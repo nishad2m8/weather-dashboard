@@ -69,12 +69,12 @@
         .current-weather {
             display: flex;
             flex-direction: column;
-            gap: 10px;
+            gap: 0px;
         }
 
         .temp-display {
             display: flex;
-            align-items: flex-start;
+            align-items: center;
             gap: 15px;
         }
 
@@ -92,40 +92,43 @@
 
         .weather-details {
             display: grid;
-            grid-template-columns: 1fr 1fr;
+            grid-template-columns: repeat(3, 1fr);
             gap: 8px;
-            font-size: 13px;
         }
 
         .detail-item {
+            background: #f9f9f9;
+            padding: 6px 0px;
+            text-align: center;
             display: flex;
             flex-direction: column;
-            gap: 4px;
+            align-items: center;
         }
 
         .detail-label {
-            color: #5e5e5e;
-            font-size: 11px;
+            color: #333;
+            font-size: 14px;
             text-transform: uppercase;
             letter-spacing: 0.5px;
-            font-weight: 600;
+            font-weight: 800;
+            text-decoration: underline;
         }
 
         .detail-value {
             color: #333;
-            font-size: 16px;
-            font-weight: 500;
+            font-size: 22px;
+            font-weight: 800;
         }
 
         .sun-moon {
             display: grid;
-            grid-template-columns: repeat(4, 1fr);
+            grid-template-columns: repeat(3, 1fr);
             gap: 8px;
         }
 
         .info-card {
             background: #f9f9f9;
-            padding: 6px 4px;
+            padding: 6px 0px;
             text-align: center;
             display: flex;
             flex-direction: column;
@@ -133,17 +136,18 @@
         }
 
         .info-label {
-            font-size: 10px;
-            color: #5e5e5e;
+            font-size: 14px;
+            color: #333;
             text-transform: uppercase;
             letter-spacing: 0.5px;
             margin-bottom: 4px;
-            font-weight: 600;
+            font-weight: 800;
+            text-decoration: underline;
         }
 
         .info-value {
-            font-size: 13px;
-            font-weight: 600;
+            font-size: 18px;
+            font-weight: 800;
             color: #333;
         }
 
@@ -295,27 +299,14 @@
                 <div class="temp-display">
                     <div class="skeleton skeleton-temp"></div>
                     <div class="skeleton skeleton-icon"></div>
+                    <div class="skeleton skeleton-text" style="width: 80px; height: 24px;"></div>
                 </div>
                 <div class="weather-details">
-                    <div class="detail-item">
-                        <div class="skeleton skeleton-text" style="width: 60px; height: 12px;"></div>
-                        <div class="skeleton skeleton-text" style="width: 80px; height: 18px;"></div>
-                    </div>
-                    <div class="detail-item">
-                        <div class="skeleton skeleton-text" style="width: 60px; height: 12px;"></div>
-                        <div class="skeleton skeleton-text" style="width: 80px; height: 18px;"></div>
-                    </div>
-                    <div class="detail-item">
-                        <div class="skeleton skeleton-text" style="width: 60px; height: 12px;"></div>
-                        <div class="skeleton skeleton-text" style="width: 80px; height: 18px;"></div>
-                    </div>
-                    <div class="detail-item">
-                        <div class="skeleton skeleton-text" style="width: 60px; height: 12px;"></div>
-                        <div class="skeleton skeleton-text" style="width: 80px; height: 18px;"></div>
-                    </div>
+                    <div class="detail-item"><div class="skeleton skeleton-card"></div></div>
+                    <div class="detail-item"><div class="skeleton skeleton-card"></div></div>
+                    <div class="detail-item"><div class="skeleton skeleton-card"></div></div>
                 </div>
                 <div class="sun-moon">
-                    <div class="info-card"><div class="skeleton skeleton-card"></div></div>
                     <div class="info-card"><div class="skeleton skeleton-card"></div></div>
                     <div class="info-card"><div class="skeleton skeleton-card"></div></div>
                     <div class="info-card"><div class="skeleton skeleton-card"></div></div>
@@ -506,50 +497,44 @@
                         <div class="temp-display">
                             <div class="temp-main">${Math.round(current.temperature_2m)}°</div>
                             <span class="material-symbols-outlined weather-icon" style="font-size: 70px; color: #F57C00;">${getWeatherIcon(current.weather_code)}</span>
+                            <div class="detail-item">
+                                <span class="detail-value">${getWeatherDescription(current.weather_code)}</span>
+                            </div>
                         </div>
 
                         <div class="weather-details">
                             <div class="detail-item">
-                                <span class="detail-label">Feels Like</span>
-                                <span class="detail-value">${Math.round(current.apparent_temperature)}°C</span>
+                                <div class="detail-label">Feels Like</div>
+                                <span class="material-symbols-outlined" style="font-size: 35px; color: #F57C00; display: block; margin: 4px 0;">thermostat</span>
+                                <div class="detail-value">${Math.round(current.apparent_temperature)}°C</div>
                             </div>
                             <div class="detail-item">
-                                <span class="detail-label">Humidity</span>
-                                <span class="detail-value">${current.relative_humidity_2m}%</span>
+                                <div class="detail-label">Humidity</div>
+                                <span class="material-symbols-outlined" style="font-size: 35px; color: #F57C00; display: block; margin: 4px 0;">humidity_percentage</span>
+                                <div class="detail-value">${current.relative_humidity_2m}%</div>
                             </div>
                             <div class="detail-item">
-                                <span class="detail-label">Wind</span>
-                                <span class="detail-value" style="display: flex; align-items: center; gap: 4px;">
-                                    <span class="material-symbols-outlined" style="font-size: 18px; transform: rotate(${current.wind_direction_10m}deg);">arrow_upward</span>
-                                    ${Math.round(current.wind_speed_10m)} km/h
-                                </span>
-                            </div>
-                            <div class="detail-item">
-                                <span class="detail-label">Condition</span>
-                                <span class="detail-value">${getWeatherDescription(current.weather_code)}</span>
+                                <div class="detail-label">Wind</div>
+                                <span class="material-symbols-outlined" style="font-size: 35px; color: #F57C00; display: block; margin: 4px 0; transform: rotate(${current.wind_direction_10m}deg);">arrow_upward</span>
+                                <div class="detail-value">${Math.round(current.wind_speed_10m)} km/h</div>
                             </div>
                         </div>
 
                         <div class="sun-moon">
                             <div class="info-card">
                                 <div class="info-label">Sunrise</div>
-                                <span class="material-symbols-outlined" style="font-size: 28px; color: #F57C00; display: block; margin: 4px 0;">wb_twilight</span>
+                                <span class="material-symbols-outlined" style="font-size: 35px; color: #F57C00; display: block; margin: 4px 0;">wb_twilight</span>
                                 <div class="info-value">${formatTime(daily.sunrise[0])}</div>
                             </div>
                             <div class="info-card">
                                 <div class="info-label">Sunset</div>
-                                <span class="material-symbols-outlined" style="font-size: 28px; color: #F57C00; display: block; margin: 4px 0;">wb_twilight</span>
+                                <span class="material-symbols-outlined" style="font-size: 35px; color: #F57C00; display: block; margin: 4px 0;">wb_twilight</span>
                                 <div class="info-value">${formatTime(daily.sunset[0])}</div>
                             </div>
                             <div class="info-card">
                                 <div class="info-label">Moon Phase</div>
-                                <span class="material-symbols-outlined" style="font-size: 28px; color: #F57C00; display: block; margin: 4px 0;">${moonPhase.icon}</span>
+                                <span class="material-symbols-outlined" style="font-size: 35px; color: #F57C00; display: block; margin: 4px 0;">${moonPhase.icon}</span>
                                 <div class="info-value">${moonPhase.name}</div>
-                            </div>
-                            <div class="info-card">
-                                <div class="info-label">UV Index</div>
-                                <span class="material-symbols-outlined" style="font-size: 28px; color: #F57C00; display: block; margin: 4px 0;">light_mode</span>
-                                <div class="info-value">${Math.round(daily.uv_index_max[0])}</div>
                             </div>
                         </div>
                     </div>
