@@ -8,13 +8,18 @@ on:
   # Allow manual trigger
   workflow_dispatch:
 
-# Permissions needed to commit and push
+# Permissions needed to commit and push + deploy to Pages
 permissions:
   contents: write
+  pages: write
+  id-token: write
 
 jobs:
   render:
     runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
 
     steps:
       - name: Checkout repository
@@ -40,3 +45,15 @@ jobs:
           git config --local user.name "github-actions[bot]"
           git add index.jpg
           git diff --quiet && git diff --staged --quiet || (git commit -m "Update screenshot: $(date -u +'%Y-%m-%d %H:%M:%S UTC')" && git push)
+
+      - name: Setup Pages
+        uses: actions/configure-pages@v5
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: '.'
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
