@@ -54,16 +54,21 @@
             overflow: hidden;
             background: white;
             padding: 5px;
+            display: grid;
+            grid-template-columns: 1.7fr 1fr;
+            gap: 10px;
+        }
+
+        .left-section {
             display: flex;
             flex-direction: column;
             gap: 5px;
         }
 
         .top-section {
-            display: grid;
-            grid-template-columns: 1.7fr 1fr;
-            gap: 20px;
-            height: 260px;
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
         }
 
         .current-weather {
@@ -114,11 +119,6 @@
             align-items: center;
         }
 
-        .temp-display .detail-item {
-            text-align: left;
-            align-items: flex-start;
-        }
-
         .detail-label {
             color: #333;
             font-size: 14px;
@@ -135,10 +135,6 @@
             overflow: hidden;
             text-overflow: ellipsis;
             white-space: nowrap;
-        }
-
-        .temp-display .detail-value {
-            text-align: left;
         }
 
         .sun-moon {
@@ -177,7 +173,8 @@
         .radar-section {
             display: flex;
             flex-direction: column;
-            gap: 10px;
+            height: 99%;
+            padding-bottom: 5px;
         }
 
         .radar-map {
@@ -224,7 +221,7 @@
 
         .forecast-days {
             display: grid;
-            grid-template-columns: repeat(7, 1fr);
+            grid-template-columns: repeat(4, 1fr);
             gap: 2px;
         }
 
@@ -321,7 +318,7 @@
 </head>
 <body>
     <div class="dashboard" id="dashboard">
-        <div class="top-section">
+        <div class="left-section">
             <div class="current-weather">
                 <div class="temp-display" style="position: relative;">
                     <div class="skeleton skeleton-temp"></div>
@@ -342,29 +339,27 @@
                     <div class="info-card"><div class="skeleton skeleton-card"></div></div>
                 </div>
             </div>
-            <div class="radar-section">
-                <div class="radar-map">
-                    <div class="skeleton" style="width: 100%; height: 100%;"></div>
+            <div class="forecast-section">
+                <div class="forecast-title">4-Day Forecast</div>
+                <div class="forecast-days">
+                    <div class="forecast-day"><div class="skeleton" style="height: 120px;"></div></div>
+                    <div class="forecast-day"><div class="skeleton" style="height: 120px;"></div></div>
+                    <div class="forecast-day"><div class="skeleton" style="height: 120px;"></div></div>
+                    <div class="forecast-day"><div class="skeleton" style="height: 120px;"></div></div>
                 </div>
             </div>
         </div>
-        <div class="forecast-section">
-            <div class="forecast-title">7-Day Forecast</div>
-            <div class="forecast-days">
-                <div class="forecast-day"><div class="skeleton" style="height: 120px;"></div></div>
-                <div class="forecast-day"><div class="skeleton" style="height: 120px;"></div></div>
-                <div class="forecast-day"><div class="skeleton" style="height: 120px;"></div></div>
-                <div class="forecast-day"><div class="skeleton" style="height: 120px;"></div></div>
-                <div class="forecast-day"><div class="skeleton" style="height: 120px;"></div></div>
-                <div class="forecast-day"><div class="skeleton" style="height: 120px;"></div></div>
-                <div class="forecast-day"><div class="skeleton" style="height: 120px;"></div></div>
+        <div class="radar-section">
+            <div class="radar-map">
+                <div class="skeleton" style="width: 100%; height: 100%;"></div>
             </div>
         </div>
     </div>
 
     <script>
         const LOCATION = 'Bahrain';
-        const BAHRAIN_LAT = 26.0;
+        // 26.0 N, 50.5577 E
+        const BAHRAIN_LAT = 25.98;
         const BAHRAIN_LON = 50.5577;
         const CACHE_KEY = 'weather_cache';
         const CACHE_DURATION = 10 * 60 * 1000; // 10 minutes
@@ -400,7 +395,7 @@
             try {
                 // Fetch weather data from Open-Meteo (no geocoding needed!)
                 const weatherResponse = await fetch(
-                    `https://api.open-meteo.com/v1/forecast?latitude=${BAHRAIN_LAT}&longitude=${BAHRAIN_LON}&current=temperature_2m,relative_humidity_2m,apparent_temperature,weather_code,wind_speed_10m,wind_direction_10m&daily=weather_code,temperature_2m_max,temperature_2m_min,sunrise,sunset,uv_index_max&timezone=auto&forecast_days=7`
+                    `https://api.open-meteo.com/v1/forecast?latitude=${BAHRAIN_LAT}&longitude=${BAHRAIN_LON}&current=temperature_2m,relative_humidity_2m,apparent_temperature,weather_code,wind_speed_10m,wind_direction_10m&daily=weather_code,temperature_2m_max,temperature_2m_min,sunrise,sunset,uv_index_max&timezone=auto&forecast_days=4`
                 );
                 const weatherData = await weatherResponse.json();
 
@@ -522,7 +517,7 @@
 
             const dashboard = document.getElementById('dashboard');
             dashboard.innerHTML = `
-                <div class="top-section">
+                <div class="left-section">
                     <div class="current-weather">
                         <div class="temp-display">
                             <div class="temp-main">${Math.round(current.temperature_2m)}°</div>
@@ -570,30 +565,30 @@
                         </div>
                     </div>
 
-                    <div class="radar-section">
-                        <div class="radar-map">
-                            <iframe loading="lazy" 
-                                src="https://embed.windy.com/embed2.html?lat=${lat}&lon=${lon}&detailLat=${lat}&detailLon=${lon}&width=650&height=450&zoom=9&level=surface&overlay=wind&product=ecmwf&menu=&message=&marker=&calendar=&pressure=&type=map&location=coordinates&detail=&metricWind=default&metricTemp=°C">
-                            frameborder="0">
-                            </iframe>
+                    <div class="forecast-section">
+                        <div class="forecast-title">4-Day Forecast</div>
+                        <div class="forecast-days">
+                            ${daily.time.slice(0, 4).map((date, index) => `
+                                <div class="forecast-day">
+                                    <span class="forecast-date">${formatDateShort(date)}</span>
+                                    <span class="material-symbols-outlined" style="font-size: 50px; color: #F57C00;">${getWeatherIcon(daily.weather_code[index])}</span>
+                                    <span class="forecast-condition">${getWeatherDescription(daily.weather_code[index])}</span>
+                                    <div>
+                                        <span class="forecast-temp">${Math.round(daily.temperature_2m_max[index])}°</span>
+                                        <span class="forecast-temp-low"> ${Math.round(daily.temperature_2m_min[index])}°</span>
+                                    </div>
+                                </div>
+                            `).join('')}
                         </div>
                     </div>
                 </div>
 
-                <div class="forecast-section">
-                    <div class="forecast-title">7-Day Forecast</div>
-                    <div class="forecast-days">
-                        ${daily.time.slice(0, 7).map((date, index) => `
-                            <div class="forecast-day">
-                                <span class="forecast-date">${formatDateShort(date)}</span>
-                                <span class="material-symbols-outlined" style="font-size: 50px; color: #F57C00;">${getWeatherIcon(daily.weather_code[index])}</span>
-                                <span class="forecast-condition">${getWeatherDescription(daily.weather_code[index])}</span>
-                                <div>
-                                    <span class="forecast-temp">${Math.round(daily.temperature_2m_max[index])}°</span>
-                                    <span class="forecast-temp-low"> ${Math.round(daily.temperature_2m_min[index])}°</span>
-                                </div>
-                            </div>
-                        `).join('')}
+                <div class="radar-section">
+                    <div class="radar-map">
+                        <iframe loading="lazy"
+                            src="https://embed.windy.com/embed2.html?lat=${lat}&lon=${lon}&detailLat=${lat}&detailLon=${lon}&width=650&height=450&zoom=10&level=surface&overlay=rain&product=ecmwf&menu=&message=&marker=&calendar=&pressure=&type=map&location=coordinates&detail=&metricWind=default&metricTemp=°C">
+                        frameborder="0">
+                        </iframe>
                     </div>
                 </div>
             `;
