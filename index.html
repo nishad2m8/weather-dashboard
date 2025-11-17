@@ -85,6 +85,13 @@
             line-height: 1;
         }
 
+        .render-timestamp {
+            margin-left: 20px;
+            font-size: 15px;
+            color: #333;
+            font-weight: normal;
+        }
+
         .weather-icon {
             width: 70px;
             height: 70px;
@@ -507,6 +514,7 @@
                             <span class="material-symbols-outlined weather-icon" style="font-size: 70px; color: #F57C00;">${getWeatherIcon(current.weather_code)}</span>
                             <div class="detail-item">
                                 <span class="detail-value">${getWeatherDescription(current.weather_code)}</span>
+                                <div class="render-timestamp" id="renderTimestamp"></div>
                             </div>
                         </div>
 
