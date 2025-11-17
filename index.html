@@ -108,9 +108,14 @@
 
         .detail-item {
             padding: 6px 0px;
-            text-align: left;
+            text-align: center;
             display: flex;
             flex-direction: column;
+            align-items: center;
+        }
+
+        .temp-display .detail-item {
+            text-align: left;
             align-items: flex-start;
         }
 
@@ -130,6 +135,9 @@
             overflow: hidden;
             text-overflow: ellipsis;
             white-space: nowrap;
+        }
+
+        .temp-display .detail-value {
             text-align: left;
         }
 
