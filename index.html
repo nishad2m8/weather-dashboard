@@ -86,10 +86,12 @@
         }
 
         .render-timestamp {
-            margin-left: 20px;
             font-size: 15px;
             color: #333;
             font-weight: normal;
+            margin-top: 5px;
+            display: block;
+            text-align: left;
         }
 
         .weather-icon {
@@ -311,10 +313,13 @@
     <div class="dashboard" id="dashboard">
         <div class="top-section">
             <div class="current-weather">
-                <div class="temp-display">
+                <div class="temp-display" style="position: relative;">
                     <div class="skeleton skeleton-temp"></div>
                     <div class="skeleton skeleton-icon"></div>
-                    <div class="skeleton skeleton-text" style="width: 80px; height: 24px;"></div>
+                    <div class="detail-item">
+                        <div class="skeleton skeleton-text" style="width: 80px; height: 24px;"></div>
+                        <div class="render-timestamp" id="renderTimestamp" style="align-self: flex-start;">Loading...</div>
+                    </div>
                 </div>
                 <div class="weather-details">
                     <div class="detail-item"><div class="skeleton skeleton-card"></div></div>

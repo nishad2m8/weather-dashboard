@@ -4,6 +4,7 @@ Render index.html to index.jpg using Playwright
 """
 import asyncio
 from datetime import datetime
+from zoneinfo import ZoneInfo
 from playwright.async_api import async_playwright
 from pathlib import Path
 
@@ -28,8 +29,10 @@ async def render_html_to_jpg():
         # Wait a bit for any dynamic content to load
         await page.wait_for_timeout(2000)
 
-        # Get current timestamp in the format "DD/MM/YY, HH:MM AM"
-        now = datetime.now()
+        # Get current timestamp in Bahrain timezone (Asia/Bahrain)
+        # Format: "DD/MM/YY, HH:MM AM"
+        bahrain_tz = ZoneInfo("Asia/Bahrain")
+        now = datetime.now(bahrain_tz)
         timestamp = now.strftime("%d/%m/%y, %I:%M %p")
 
         # Inject the render timestamp into the page
