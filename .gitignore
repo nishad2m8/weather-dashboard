@@ -18,7 +18,7 @@ build/
 dist/
 *.o
 *.elf
-*.bin
+# *.bin
 
 # IDE and editor files
 .vscode/
