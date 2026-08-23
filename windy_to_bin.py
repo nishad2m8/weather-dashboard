@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Render index.html to index.jpg and convert to LVGL binary format
+Render windy.html to windy.jpg and convert to LVGL binary format
 """
 import asyncio
 from datetime import datetime
@@ -145,7 +145,7 @@ def convert_image_to_lvgl_bin(input_path, output_path, dithering=False, big_endi
 
 
 async def render_html_to_jpg():
-    """Render the index.html file to a JPG screenshot"""
+    """Render the windy.html file to a JPG screenshot"""
     if async_playwright is None:
         raise RuntimeError(
             "playwright is not installed. Install it with `pip install playwright` "
